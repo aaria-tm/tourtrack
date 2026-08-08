@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TourTrack — Tourist Navigator System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --brand: #1a6b4a;
+  --brand-dark: #0f4a33;
+  --brand-light: #e8f5ef;
+  --brand-mid: #2d9566;
+  --accent: #f59e0b;
+  --accent-light: #fef3c7;
+  --danger: #dc2626;
+  --danger-light: #fef2f2;
+  --danger-dark: #991b1b;
+  --info: #2563eb;
+  --info-light: #eff6ff;
+  --surface: #ffffff;
+  --surface-1: #f8faf9;
+  --surface-2: #f0f4f2;
+  --border: #d1e4da;
+  --border-strong: #9dc4b0;
+  --text: #0f1f16;
+  --text-2: #3d5a4a;
+  --text-3: #6b8f7a;
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 16px;
+  --shadow: 0 1px 3px rgba(15,31,22,0.08), 0 4px 16px rgba(15,31,22,0.05);
+  --shadow-lg: 0 4px 24px rgba(15,31,22,0.12), 0 2px 8px rgba(15,31,22,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--surface-1);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ── Typography ── */
+h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; }
+
+/* ── Layout ── */
+#app { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ── Navbar ── */
+.navbar {
+  background: var(--brand-dark);
+  color: #fff;
+  padding: 0 24px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.navbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+.navbar-brand svg { width: 28px; height: 28px; }
+.nav-badge {
+  background: var(--brand-mid);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 20px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+.navbar-right { display: flex; align-items: center; gap: 12px; }
+#nav-user { font-size: 13px; color: rgba(255,255,255,0.7); }
+.btn-nav {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background 0.15s;
+}
+.btn-nav:hover { background: rgba(255,255,255,0.2); }
+
+/* ── Screens ── */
+.screen { display: none; animation: fadeIn 0.2s ease; }
+.screen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+
+/* ── Landing / Auth ── */
+.landing {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0f4a33 0%, #1a6b4a 50%, #2d9566 100%);
+  display: flex;
+  flex-direction: column;
+}
+.landing-hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 24px;
+  text-align: center;
+  color: #fff;
+}
+.landing-logo {
+  width: 72px;
+  height: 72px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+}
+.landing-logo svg { width: 40px; height: 40px; }
+.landing-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 42px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+.landing-sub {
+  font-size: 18px;
+  opacity: 0.8;
+  margin-bottom: 48px;
+  max-width: 420px;
+}
+.login-cards {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 700px;
+}
+.login-card {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 20px;
+  padding: 32px 28px;
+  width: 280px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  backdrop-filter: blur(8px);
+}
+.login-card:hover {
+  background: rgba(255,255,255,0.15);
+  transform: translateY(-2px);
+}
+.login-card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  font-size: 24px;
+}
+.guide-icon { background: rgba(245,158,11,0.25); }
+.tourist-icon { background: rgba(99,190,144,0.25); }
+.login-card h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 8px;
+}
+.login-card p {
+  font-size: 13px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.5;
+}
+
+/* ── Auth Modal ── */
+.modal-overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+  display: none; align-items: center; justify-content: center;
+  z-index: 1000; padding: 20px;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: var(--surface);
+  border-radius: 20px;
+  padding: 36px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: var(--shadow-lg);
+}
+.modal-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 24px;
+}
+.modal-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+}
+.modal-close {
+  background: var(--surface-2); border: none; width: 32px; height: 32px;
+  border-radius: 50%; cursor: pointer; font-size: 18px; color: var(--text-3);
+  display: flex; align-items: center; justify-content: center; transition: background 0.15s;
+}
+.modal-close:hover { background: var(--border); }
+
+/* ── Forms ── */
+.field { margin-bottom: 16px; }
+.field label { display: block; font-size: 13px; font-weight: 500; color: var(--text-2); margin-bottom: 6px; }
+.field input, .field select {
+  width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm); font-size: 14px; background: var(--surface);
+  color: var(--text); outline: none; transition: border-color 0.15s;
+  font-family: 'Inter', sans-serif;
+}
+.field input:focus, .field select:focus { border-color: var(--brand); }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* ── Buttons ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 10px 20px; border-radius: var(--radius-sm); font-size: 14px;
+  font-weight: 600; cursor: pointer; border: none; transition: all 0.15s;
+  font-family: 'Inter', sans-serif; white-space: nowrap;
+}
+.btn-primary { background: var(--brand); color: #fff; }
+.btn-primary:hover { background: var(--brand-dark); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-danger:hover { background: var(--danger-dark); }
+.btn-secondary {
+  background: var(--surface-2); color: var(--text); border: 1px solid var(--border);
+}
+.btn-secondary:hover { background: var(--border); }
+.btn-ghost { background: transparent; color: var(--brand); border: 1.5px solid var(--brand); }
+.btn-ghost:hover { background: var(--brand-light); }
+.btn-full { width: 100%; }
+.btn-lg { padding: 14px 28px; font-size: 16px; border-radius: var(--radius); }
+.btn-sm { padding: 6px 14px; font-size: 13px; }
+
+/* ── Dashboard ── */
+.dash-layout {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: calc(100vh - 60px);
+}
+.sidebar {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  padding: 20px 0;
+}
+.sidebar-section { padding: 8px 16px; }
+.sidebar-label {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-3);
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.sidebar-menu { list-style: none; }
+.sidebar-menu li a {
+  display: flex; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: var(--radius-sm);
+  text-decoration: none; color: var(--text-2);
+  font-size: 14px; font-weight: 500; cursor: pointer;
+  transition: all 0.15s;
+}
+.sidebar-menu li a:hover, .sidebar-menu li a.active {
+  background: var(--brand-light); color: var(--brand);
+}
+.sidebar-menu li a svg { width: 18px; height: 18px; }
+.main-content { padding: 28px; overflow-y: auto; }
+
+/* ── Page Panels ── */
+.panel { display: none; }
+.panel.active { display: block; animation: fadeIn 0.2s ease; }
+.page-header { margin-bottom: 24px; }
+.page-title { font-size: 26px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.page-sub { font-size: 14px; color: var(--text-3); }
+
+/* ── Stats Grid ── */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+.stat-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.stat-label { font-size: 12px; font-weight: 600; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.stat-value { font-size: 32px; font-weight: 700; color: var(--text); line-height: 1; }
+.stat-sub { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+.stat-card.danger { border-color: var(--danger); background: var(--danger-light); }
+.stat-card.danger .stat-value { color: var(--danger); }
+
+/* ── Cards ── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 16px;
+}
+.card-title { font-size: 16px; font-weight: 600; color: var(--text); }
+.card-sub { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+/* ── Trip Code ── */
+.trip-code-display {
+  background: var(--brand-light);
+  border: 2px dashed var(--brand);
+  border-radius: var(--radius);
+  padding: 24px;
+  text-align: center;
+  margin: 16px 0;
+}
+.trip-code-value {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 42px;
+  font-weight: 700;
+  color: var(--brand);
+  letter-spacing: 8px;
+}
+.trip-code-label { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+
+/* ── Tourist List ── */
+.tourist-list { display: flex; flex-direction: column; gap: 10px; }
+.tourist-item {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition: border-color 0.15s;
+}
+.tourist-item.sos-alert { border-color: var(--danger); background: var(--danger-light); animation: pulse-border 1.5s infinite; }
+@keyframes pulse-border { 0%,100% { border-color: var(--danger); } 50% { border-color: #fca5a5; } }
+.tourist-avatar {
+  width: 42px; height: 42px; border-radius: 50%;
+  background: var(--brand-light); color: var(--brand);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; font-weight: 700; flex-shrink: 0;
+}
+.tourist-avatar.sos { background: var(--danger-light); color: var(--danger); }
+.tourist-info { flex: 1; min-width: 0; }
+.tourist-name { font-size: 14px; font-weight: 600; }
+.tourist-detail { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+.tourist-location { font-size: 12px; color: var(--brand); margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+.badge {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+}
+.badge-green { background: #d1fae5; color: #065f46; }
+.badge-red { background: var(--danger-light); color: var(--danger-dark); }
+.badge-amber { background: var(--accent-light); color: #92400e; }
+.badge-gray { background: var(--surface-2); color: var(--text-3); }
+.badge-blue { background: var(--info-light); color: #1e40af; }
+
+/* ── Map Area ── */
+.map-container {
+  background: #e8f5ef;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  height: 340px;
+  position: relative;
+  overflow: hidden;
+}
+.map-canvas { width: 100%; height: 100%; }
+.map-label {
+  position: absolute; bottom: 12px; right: 12px;
+  background: rgba(255,255,255,0.9); border-radius: 8px;
+  padding: 6px 12px; font-size: 12px; color: var(--text-2);
+}
+
+/* ── Location Log ── */
+.log-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.log-table th {
+  background: var(--surface-2); color: var(--text-2);
+  font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+  padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border);
+}
+.log-table td { padding: 10px 14px; border-bottom: 1px solid var(--surface-2); }
+.log-table tr:last-child td { border-bottom: none; }
+.log-table tr:hover td { background: var(--surface-1); }
+
+/* ── SOS Panel ── */
+.sos-panel {
+  background: var(--danger-light);
+  border: 2px solid var(--danger);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 16px;
+  display: none;
+}
+.sos-panel.active { display: block; animation: fadeIn 0.2s ease; }
+.sos-panel-header {
+  display: flex; align-items: center; gap: 10px;
+  color: var(--danger); font-weight: 700; font-size: 18px; margin-bottom: 12px;
+}
+.sos-dot {
+  width: 12px; height: 12px; background: var(--danger); border-radius: 50%;
+  animation: blink 1s infinite;
+}
+@keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+/* ── SOS Button (Tourist) ── */
+.sos-btn-wrap { padding: 24px; text-align: center; }
+.sos-btn {
+  width: 160px; height: 160px; border-radius: 50%;
+  background: var(--danger); color: #fff;
+  border: 6px solid #fca5a5;
+  cursor: pointer;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 24px; font-weight: 700;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px;
+  box-shadow: 0 0 0 0 rgba(220,38,38,0.4);
+  transition: transform 0.1s;
+  margin: 0 auto;
+}
+.sos-btn:hover { animation: sos-pulse 1.5s infinite; }
+.sos-btn:active { transform: scale(0.95); }
+@keyframes sos-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); }
+  70% { box-shadow: 0 0 0 20px rgba(220,38,38,0); }
+  100% { box-shadow: 0 0 0 0 rgba(220,38,38,0); }
+}
+.sos-btn svg { width: 36px; height: 36px; }
+.sos-btn.sent { background: #6b7280; border-color: #9ca3af; }
+
+/* ── Tourist Dashboard ── */
+.location-status {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 16px;
+}
+.loc-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.loc-dot.active { background: #22c55e; animation: blink 2s infinite; }
+.loc-dot.inactive { background: #9ca3af; }
+.loc-text { flex: 1; }
+.loc-label { font-size: 13px; font-weight: 600; }
+.loc-sub { font-size: 12px; color: var(--text-3); margin-top: 2px; }
+
+/* ── Geofence Zone Cards ── */
+.zone-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
+.zone-card {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  background: var(--surface);
+}
+.zone-card.entered { border-color: var(--brand); background: var(--brand-light); }
+.zone-card.nearby { border-color: var(--accent); background: var(--accent-light); }
+.zone-name { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+.zone-status { font-size: 11px; color: var(--text-3); }
+.zone-card.entered .zone-name { color: var(--brand); }
+.zone-card.entered .zone-status { color: var(--brand-mid); }
+
+/* ── Notification ── */
+.notif {
+  position: fixed; top: 72px; right: 20px; z-index: 200;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 14px 18px;
+  max-width: 320px; box-shadow: var(--shadow-lg);
+  display: none; animation: slideIn 0.3s ease;
+}
+.notif.show { display: block; }
+.notif.danger { border-color: var(--danger); background: var(--danger-light); }
+.notif.success { border-color: #22c55e; background: #f0fdf4; }
+@keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+.notif-title { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.notif.danger .notif-title { color: var(--danger); }
+.notif.success .notif-title { color: #15803d; }
+.notif-msg { font-size: 13px; color: var(--text-2); }
+
+/* ── Trip Join Section ── */
+.join-hero {
+  text-align: center;
+  padding: 40px 20px;
+  max-width: 440px;
+  margin: 0 auto;
+}
+.join-icon {
+  width: 80px; height: 80px; border-radius: 24px;
+  background: var(--brand-light); color: var(--brand);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 20px; font-size: 36px;
+}
+.join-title { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+.join-sub { color: var(--text-3); margin-bottom: 32px; font-size: 15px; }
+
+/* ── Divider ── */
+.divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+/* ── Tabs ── */
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+.tab {
+  padding: 10px 20px; font-size: 14px; font-weight: 500;
+  color: var(--text-3); cursor: pointer; border-bottom: 2px solid transparent;
+  transition: all 0.15s; margin-bottom: -1px;
+}
+.tab.active { color: var(--brand); border-bottom-color: var(--brand); }
+.tab:hover { color: var(--text); }
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ── Scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .dash-layout { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .login-cards { flex-direction: column; }
+  .login-card { width: 100%; }
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ════ NAVBAR ════ -->
+<nav class="navbar" id="main-nav" style="display:none">
+  <div class="navbar-brand">
+    <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="14" cy="14" r="13" fill="#2d9566" opacity="0.3"/>
+      <path d="M14 4C9.58 4 6 7.58 6 12c0 6 8 14 8 14s8-8 8-14c0-4.42-3.58-8-8-8zm0 10.5A2.5 2.5 0 1114 9a2.5 2.5 0 010 5.5z" fill="white"/>
+    </svg>
+    TourTrack
+  </div>
+  <div class="navbar-right">
+    <span id="nav-user"></span>
+    <span id="nav-role-badge" class="nav-badge"></span>
+    <button class="btn-nav" onclick="logout()">Sign out</button>
+  </div>
+</nav>
+
+<!-- ════ NOTIFICATION ════ -->
+<div id="notif" class="notif"></div>
+
+<!-- ════ LANDING ════ -->
+<div id="screen-landing" class="screen active">
+  <div class="landing">
+    <div class="landing-hero">
+      <div class="landing-logo">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M20 2C11.16 2 4 9.16 4 18c0 10.5 16 26 16 26s16-15.5 16-26C36 9.16 28.84 2 20 2zm0 21A5 5 0 1120 13a5 5 0 010 10z" fill="white"/>
+        </svg>
+      </div>
+      <div class="landing-title">TourTrack</div>
+      <div class="landing-sub">Real-time tourist safety & geofencing navigator for guided group trips</div>
+      <div class="login-cards">
+        <div class="login-card" onclick="openAuth('guide')">
+          <div class="login-card-icon guide-icon">🧭</div>
+          <h3>Tour Guide</h3>
+          <p>Create & manage trips, monitor tourist locations, receive SOS alerts in real time</p>
+        </div>
+        <div class="login-card" onclick="openAuth('tourist')">
+          <div class="login-card-icon tourist-icon">🎒</div>
+          <h3>Tourist</h3>
+          <p>Join a guided trip using a code, share location automatically, send SOS if needed</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ AUTH MODAL ════ -->
+<div id="modal-auth" class="modal-overlay">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="auth-title">Guide Login</div>
+      <button class="modal-close" onclick="closeAuth()">✕</button>
+    </div>
+    <div id="auth-tabs" class="tabs" style="margin-top:-8px">
+      <div class="tab active" onclick="switchAuthTab('login')">Sign in</div>
+      <div class="tab" onclick="switchAuthTab('register')">Register</div>
+    </div>
+    <div id="auth-login" class="tab-content active">
+      <div class="field">
+        <label>Email</label>
+        <input type="email" id="login-email" placeholder="guide@example.com">
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••">
+      </div>
+      <button class="btn btn-primary btn-full" onclick="doLogin()">Sign in</button>
+      <p style="text-align:center;font-size:12px;color:var(--text-3);margin-top:12px">
+        Demo: guide@demo.com / tourist@demo.com | pass: demo123
+      </p>
+    </div>
+    <div id="auth-register" class="tab-content">
+      <div class="field">
+        <label>Full Name</label>
+        <input type="text" id="reg-name" placeholder="Your full name">
+      </div>
+      <div class="field-row">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="reg-email" placeholder="email@example.com">
+        </div>
+        <div class="field">
+          <label>Password</label>
+          <input type="password" id="reg-password" placeholder="••••••••">
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" onclick="doRegister()">Create account</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════ GUIDE DASHBOARD ════ -->
+<div id="screen-guide" class="screen">
+  <div class="dash-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-section" style="margin-bottom:8px">
+        <div class="sidebar-label">Guide Menu</div>
+        <ul class="sidebar-menu">
+          <li><a onclick="showPanel('guide-overview')" class="active" id="nav-guide-overview">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+            Overview
+          </a></li>
+          <li><a onclick="showPanel('guide-create-trip')" id="nav-guide-create-trip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v8M8 12h8"/></svg>
+            Create Trip
+          </a></li>
+          <li><a onclick="showPanel('guide-active-trip')" id="nav-guide-active-trip">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5z"/></svg>
+            Active Trip
+          </a></li>
+          <li><a onclick="showPanel('guide-location-log')" id="nav-guide-location-log">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h9"/></svg>
+            Location Log
+          </a></li>
+          <li><a onclick="showPanel('guide-sos')" id="nav-guide-sos">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4.5 8-11.8A8 8 0 0012 2a8 8 0 00-8 8.2c0 7.3 8 11.8 8 11.8z"/><circle cx="12" cy="10" r="3"/></svg>
+            SOS Alerts
+            <span id="sos-badge" style="background:var(--danger);color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;margin-left:auto;display:none">0</span>
+          </a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Panel: Overview -->
+      <div id="guide-overview" class="panel active">
+        <div class="page-header">
+          <div class="page-title">Dashboard</div>
+          <div class="page-sub">Monitor all your active tourists and trips</div>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Active Tourists</div>
+            <div class="stat-value" id="stat-tourists">0</div>
+            <div class="stat-sub">in current trip</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Zones Visited</div>
+            <div class="stat-value" id="stat-zones">0</div>
+            <div class="stat-sub">entries today</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Current Trip</div>
+            <div class="stat-value" id="stat-trip-code" style="font-size:22px;letter-spacing:4px">—</div>
+            <div class="stat-sub" id="stat-trip-name"></div>
+          </div>
+          <div class="stat-card danger" id="stat-sos-card" style="display:none">
+            <div class="stat-label">⚠ SOS Active</div>
+            <div class="stat-value" id="stat-sos-count">0</div>
+            <div class="stat-sub">tourists need help</div>
+          </div>
+        </div>
+        <!-- SOS Alerts in overview -->
+        <div id="overview-sos" class="sos-panel">
+          <div class="sos-panel-header">
+            <div class="sos-dot"></div>
+            EMERGENCY — SOS Received
+          </div>
+          <div id="overview-sos-list"></div>
+        </div>
+        <!-- Map -->
+        <div class="card">
+          <div class="card-header">
+            <div><div class="card-title">Live Tourist Map</div><div class="card-sub">Real-time positions (simulated)</div></div>
+          </div>
+          <div class="map-container">
+            <canvas id="guide-map" class="map-canvas"></canvas>
+            <div class="map-label">🗺 Live tracking active</div>
+          </div>
+        </div>
+        <!-- Tourist List -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">Tourists in Trip</div>
+            <button class="btn btn-sm btn-ghost" onclick="refreshTouristList()">↻ Refresh</button>
+          </div>
+          <div id="guide-tourist-list" class="tourist-list">
+            <p style="color:var(--text-3);font-size:14px;padding:20px;text-align:center">No tourists in current trip</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel: Create Trip -->
+      <div id="guide-create-trip" class="panel">
+        <div class="page-header">
+          <div class="page-title">Create New Trip</div>
+          <div class="page-sub">Set up a guided trip and share the code with your tourists</div>
+        </div>
+        <div style="max-width:560px">
+          <div class="card">
+            <div class="card-title" style="margin-bottom:16px">Trip Details</div>
+            <div class="field">
+              <label>Trip Name</label>
+              <input type="text" id="trip-name" placeholder="e.g. Goa Heritage Walk">
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label>Destination</label>
+                <input type="text" id="trip-dest" placeholder="e.g. Goa, India">
+              </div>
+              <div class="field">
+                <label>Date</label>
+                <input type="date" id="trip-date">
+              </div>
+            </div>
+            <div class="field">
+              <label>Trip Description</label>
+              <input type="text" id="trip-desc" placeholder="Brief description of the itinerary">
+            </div>
+            <div class="field">
+              <label>Max Tourists</label>
+              <input type="number" id="trip-max" value="20" min="1" max="100">
+            </div>
+            <div class="field">
+              <label>Geofence Zones (comma-separated landmarks)</label>
+              <input type="text" id="trip-zones" placeholder="Gateway of India, Marine Drive, Colaba Causeway">
+            </div>
+            <hr class="divider">
+            <button class="btn btn-primary btn-lg" onclick="createTrip()">Generate Trip Code</button>
+          </div>
+          <!-- Generated Code Display -->
+          <div id="trip-created-card" class="card" style="display:none">
+            <div class="card-title" style="margin-bottom:4px">Trip Created!</div>
+            <div class="card-sub" id="trip-created-name"></div>
+            <div class="trip-code-display">
+              <div class="trip-code-value" id="generated-code"></div>
+              <div class="trip-code-label">Share this code with your tourists</div>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:4px">
+              <button class="btn btn-ghost btn-full" onclick="copyTripCode()">📋 Copy Code</button>
+              <button class="btn btn-primary btn-full" onclick="activateTrip()">▶ Start Trip</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel: Active Trip -->
+      <div id="guide-active-trip" class="panel">
+        <div class="page-header">
+          <div class="page-title">Active Trip</div>
+          <div class="page-sub" id="active-trip-name">No trip active</div>
+        </div>
+        <div id="no-active-trip" style="text-align:center;padding:60px 20px;color:var(--text-3)">
+          <div style="font-size:48px;margin-bottom:16px">🗺</div>
+          <div style="font-size:16px;font-weight:600">No active trip</div>
+          <div style="font-size:14px;margin-top:4px">Create and start a trip first</div>
+        </div>
+        <div id="active-trip-content" style="display:none">
+          <div class="stats-grid">
+            <div class="stat-card"><div class="stat-label">Trip Code</div><div class="stat-value" style="font-size:22px;letter-spacing:4px" id="active-code">—</div></div>
+            <div class="stat-card"><div class="stat-label">Tourists Joined</div><div class="stat-value" id="active-tourist-count">0</div></div>
+            <div class="stat-card"><div class="stat-label">Location Events</div><div class="stat-value" id="active-event-count">0</div></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Geofence Zones</div>
+              <span class="badge badge-green">Active Monitoring</span>
+            </div>
+            <div id="guide-zone-grid" class="zone-grid"></div>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Tourists</div>
+              <button class="btn btn-sm btn-ghost" onclick="refreshTouristList()">↻ Refresh</button>
+            </div>
+            <div id="active-tourist-list" class="tourist-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel: Location Log -->
+      <div id="guide-location-log" class="panel">
+        <div class="page-header">
+          <div class="page-title">Location Log</div>
+          <div class="page-sub">Full history of tourist zone entries and exits</div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden">
+          <table class="log-table">
+            <thead>
+              <tr>
+                <th>Tourist</th>
+                <th>Event</th>
+                <th>Zone / Location</th>
+                <th>Coordinates</th>
+                <th>Time</th>
+              </tr>
+            </thead>
+            <tbody id="location-log-body">
+              <tr><td colspan="5" style="text-align:center;color:var(--text-3);padding:40px">No location events yet</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Panel: SOS -->
+      <div id="guide-sos" class="panel">
+        <div class="page-header">
+          <div class="page-title">SOS Alerts</div>
+          <div class="page-sub">Emergency distress signals from tourists</div>
+        </div>
+        <div id="sos-empty" style="text-align:center;padding:60px 20px;color:var(--text-3)">
+          <div style="font-size:48px;margin-bottom:16px">✅</div>
+          <div style="font-size:16px;font-weight:600">All clear</div>
+          <div style="font-size:14px;margin-top:4px">No SOS alerts received</div>
+        </div>
+        <div id="sos-alert-list" class="tourist-list"></div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- ════ TOURIST DASHBOARD ════ -->
+<div id="screen-tourist" class="screen">
+  <div class="dash-layout">
+    <aside class="sidebar">
+      <div class="sidebar-section" style="margin-bottom:8px">
+        <div class="sidebar-label">Tourist Menu</div>
+        <ul class="sidebar-menu">
+          <li><a onclick="showTouristPanel('tourist-join')" id="nav-tourist-join" class="active">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 012 2v14a2 2 0 01-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+            Join Trip
+          </a></li>
+          <li><a onclick="showTouristPanel('tourist-map')" id="nav-tourist-map">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5z"/></svg>
+            My Location
+          </a></li>
+          <li><a onclick="showTouristPanel('tourist-sos-panel')" id="nav-tourist-sos-panel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            SOS Emergency
+          </a></li>
+        </ul>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <!-- Tourist: Join Trip -->
+      <div id="tourist-join" class="panel active">
+        <div id="join-form-section">
+          <div class="join-hero">
+            <div class="join-icon">🎒</div>
+            <div class="join-title">Join Your Trip</div>
+            <div class="join-sub">Enter the trip code from your guide and fill in your details to get started</div>
+          </div>
+          <div style="max-width:480px;margin:0 auto">
+            <div class="card">
+              <div class="card-title" style="margin-bottom:16px">Your Information</div>
+              <div class="field">
+                <label>Full Name</label>
+                <input type="text" id="t-name" placeholder="Your full name">
+              </div>
+              <div class="field-row">
+                <div class="field">
+                  <label>Phone Number</label>
+                  <input type="tel" id="t-phone" placeholder="+91 98765 43210">
+                </div>
+                <div class="field">
+                  <label>Age</label>
+                  <input type="number" id="t-age" placeholder="28" min="1" max="120">
+                </div>
+              </div>
+              <div class="field">
+                <label>Emergency Contact</label>
+                <input type="tel" id="t-emergency" placeholder="+91 98765 00000">
+              </div>
+              <hr class="divider">
+              <div class="field">
+                <label>Trip Code (from your guide)</label>
+                <input type="text" id="t-code" placeholder="e.g. TRK-4829" style="font-family:'Space Grotesk',sans-serif;font-size:20px;letter-spacing:4px;text-transform:uppercase">
+              </div>
+              <button class="btn btn-primary btn-lg btn-full" onclick="joinTrip()">Join Trip</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Joined State -->
+        <div id="joined-section" style="display:none">
+          <div class="page-header">
+            <div class="page-title" id="joined-trip-title">In Trip</div>
+            <div class="page-sub" id="joined-trip-sub"></div>
+          </div>
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-label">Trip Code</div>
+              <div class="stat-value" style="font-size:20px;letter-spacing:4px" id="joined-code">—</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Your Status</div>
+              <div class="stat-value" style="font-size:20px" id="joined-status">Active</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-label">Zones Visited</div>
+              <div class="stat-value" id="joined-zones">0</div>
+            </div>
+          </div>
+          <div class="location-status">
+            <div class="loc-dot active" id="loc-status-dot"></div>
+            <div class="loc-text">
+              <div class="loc-label" id="loc-status-label">Location sharing active</div>
+              <div class="loc-sub" id="loc-status-coords">Acquiring GPS…</div>
+            </div>
+            <span class="badge badge-green">Live</span>
+          </div>
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">Nearby Zones</div>
+              <div class="card-sub">Your guide will be notified when you enter or exit</div>
+            </div>
+            <div id="tourist-zone-grid" class="zone-grid"></div>
+          </div>
+          <div class="card" style="margin-top:16px">
+            <div class="card-title" style="margin-bottom:8px">My Location History</div>
+            <div id="tourist-log" style="font-size:13px;color:var(--text-2)">
+              <p style="color:var(--text-3)">No location events yet</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tourist: Map -->
+      <div id="tourist-map" class="panel">
+        <div class="page-header">
+          <div class="page-title">My Location</div>
+          <div class="page-sub">Live GPS position and nearby landmarks</div>
+        </div>
+        <div class="location-status">
+          <div class="loc-dot active"></div>
+          <div class="loc-text">
+            <div class="loc-label">GPS Active</div>
+            <div class="loc-sub" id="tourist-gps-coords">Waiting for coordinates…</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="map-container">
+            <canvas id="tourist-map-canvas" class="map-canvas"></canvas>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:12px">Zone Status</div>
+          <div id="tourist-map-zones" class="zone-grid"></div>
+        </div>
+      </div>
+
+      <!-- Tourist: SOS -->
+      <div id="tourist-sos-panel" class="panel">
+        <div class="page-header">
+          <div class="page-title">Emergency SOS</div>
+          <div class="page-sub">Press if you need immediate help from your guide</div>
+        </div>
+        <div class="card" style="text-align:center;padding:40px 20px">
+          <div style="font-size:15px;color:var(--text-2);margin-bottom:8px;font-weight:500">Press and hold for 2 seconds</div>
+          <div style="font-size:13px;color:var(--text-3);margin-bottom:32px">Your guide will be notified immediately with your location</div>
+          <div class="sos-btn-wrap">
+            <button class="sos-btn" id="tourist-sos-btn" onmousedown="startSOS()" onmouseup="cancelSOS()" ontouchstart="startSOS()" ontouchend="cancelSOS()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              SOS
+            </button>
+          </div>
+          <div id="sos-countdown" style="font-size:18px;font-weight:700;color:var(--danger);margin-top:20px;display:none"></div>
+          <div id="sos-sent-msg" style="display:none;margin-top:24px">
+            <div style="font-size:16px;font-weight:700;color:var(--danger);margin-bottom:4px">🚨 SOS Sent!</div>
+            <div style="font-size:13px;color:var(--text-3)">Your guide has been alerted. Help is on the way.</div>
+            <button class="btn btn-secondary" style="margin-top:16px" onclick="cancelSOSAlert()">Cancel Alert</button>
+          </div>
+        </div>
+        <div class="card" style="border-color:var(--accent);background:var(--accent-light)">
+          <div class="card-title" style="color:#92400e;margin-bottom:8px">⚠ When to use SOS</div>
+          <ul style="font-size:13px;color:#92400e;line-height:2;padding-left:16px">
+            <li>Medical emergency or injury</li>
+            <li>Lost from the group</li>
+            <li>Feeling unsafe or threatened</li>
+            <li>Any situation requiring immediate guide assistance</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+</div><!-- end #app -->
+
+<script>
+/* ════════════════════════════════════════
+   TourTrack — Backend (localStorage-based)
+   Simulates Java Spring Boot backend logic
+   ════════════════════════════════════════ */
+
+const DB = {
+  get: k => { try { return JSON.parse(localStorage.getItem('tt_' + k) || 'null'); } catch { return null; } },
+  set: (k, v) => localStorage.setItem('tt_' + k, JSON.stringify(v)),
+  del: k => localStorage.removeItem('tt_' + k)
+};
+
+/* ── Seed Demo Data ── */
+function seedDB() {
+  if (!DB.get('seeded')) {
+    DB.set('users', [
+      { id: 'u1', name: 'Alex Guide', email: 'guide@demo.com', password: 'demo123', role: 'guide' },
+      { id: 'u2', name: 'Sam Tourist', email: 'tourist@demo.com', password: 'demo123', role: 'tourist' }
+    ]);
+    DB.set('trips', []);
+    DB.set('tourists', []);
+    DB.set('location_log', []);
+    DB.set('sos_alerts', []);
+    DB.set('seeded', true);
+  }
+}
+
+/* ── State ── */
+let currentUser = null;
+let currentTrip = null;
+let currentTourist = null;
+let locationWatchId = null;
+let sosTimer = null;
+let sosActive = false;
+let mapAnimFrame = null;
+let touristPositions = {};
+let guideRefreshInterval = null;
+
+/* ════ Auth ════ */
+let authRole = 'guide';
+
+function openAuth(role) {
+  authRole = role;
+  document.getElementById('auth-title').textContent = role === 'guide' ? '🧭 Guide Login' : '🎒 Tourist Login';
+  document.getElementById('modal-auth').classList.add('active');
+}
+function closeAuth() {
+  document.getElementById('modal-auth').classList.remove('active');
+}
+function switchAuthTab(tab) {
+  document.querySelectorAll('#auth-tabs .tab').forEach((t,i) => t.classList.toggle('active', (i===0 && tab==='login') || (i===1 && tab==='register')));
+  document.getElementById('auth-login').classList.toggle('active', tab === 'login');
+  document.getElementById('auth-register').classList.toggle('active', tab === 'register');
+}
+
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim().toLowerCase();
+  const pass = document.getElementById('login-password').value;
+  const users = DB.get('users') || [];
+  const user = users.find(u => u.email === email && u.password === pass && u.role === authRole);
+  if (!user) { showNotif('Login failed', 'Email, password or role mismatch.', 'danger'); return; }
+  loginUser(user);
+}
+
+function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim().toLowerCase();
+  const pass = document.getElementById('reg-password').value;
+  if (!name || !email || !pass) { showNotif('Missing fields', 'Please fill all fields.', 'danger'); return; }
+  const users = DB.get('users') || [];
+  if (users.find(u => u.email === email)) { showNotif('Account exists', 'Try logging in instead.', 'danger'); return; }
+  const user = { id: 'u' + Date.now(), name, email, password: pass, role: authRole };
+  users.push(user);
+  DB.set('users', users);
+  loginUser(user);
+}
+
+function loginUser(user) {
+  currentUser = user;
+  DB.set('session', user);
+  closeAuth();
+  document.getElementById('nav-user').textContent = user.name;
+  document.getElementById('nav-role-badge').textContent = user.role;
+  document.getElementById('main-nav').style.display = 'flex';
+  showScreen(user.role === 'guide' ? 'screen-guide' : 'screen-tourist');
+  if (user.role === 'guide') initGuide();
+  else initTourist();
+  showNotif('Welcome back!', `Signed in as ${user.name}`, 'success');
+}
+
+function logout() {
+  currentUser = null;
+  DB.del('session');
+  if (locationWatchId) navigator.geolocation.clearWatch(locationWatchId);
+  if (guideRefreshInterval) clearInterval(guideRefreshInterval);
+  if (mapAnimFrame) cancelAnimationFrame(mapAnimFrame);
+  showScreen('screen-landing');
+  document.getElementById('main-nav').style.display = 'none';
+}
+
+/* ════ Guide Logic ════ */
+function initGuide() {
+  currentTrip = getActiveTrip();
+  refreshGuideUI();
+  startGuideRefresh();
+  initGuideMap();
+}
+
+function getActiveTrip() {
+  const trips = DB.get('trips') || [];
+  return trips.find(t => t.guideId === currentUser.id && t.status === 'active') || null;
+}
+
+function createTrip() {
+  if (!currentUser) { showNotif('Not logged in', 'Please sign in as a guide first.', 'danger'); return; }
+  const name = document.getElementById('trip-name').value.trim();
+  const dest = document.getElementById('trip-dest').value.trim();
+  const date = document.getElementById('trip-date').value;
+  const desc = document.getElementById('trip-desc').value.trim();
+  const maxEl = document.getElementById('trip-max');
+  const max = parseInt(maxEl ? maxEl.value : '20') || 20;
+  const zonesEl = document.getElementById('trip-zones');
+  const zonesRaw = zonesEl ? zonesEl.value.trim() : '';
+  if (!name || !dest) { showNotif('Missing info', 'Trip name and destination are required.', 'danger'); return; }
+  const zones = zonesRaw ? zonesRaw.split(',').map(z => z.trim()).filter(Boolean) : ['General Area'];
+  const code = 'TRK-' + Math.floor(1000 + Math.random() * 9000);
+  const trip = {
+    id: 'trip_' + Date.now(),
+    guideId: currentUser.id,
+    guideName: currentUser.name,
+    name, dest, date, desc, max, zones, code,
+    status: 'ready',
+    createdAt: new Date().toISOString()
+  };
+  try {
+    const trips = DB.get('trips') || [];
+    trips.push(trip);
+    DB.set('trips', trips);
+    const codeEl = document.getElementById('generated-code');
+    const nameEl = document.getElementById('trip-created-name');
+    const cardEl = document.getElementById('trip-created-card');
+    if (codeEl) codeEl.textContent = code;
+    if (nameEl) nameEl.textContent = name + ' · ' + dest;
+    if (cardEl) cardEl.style.display = 'block';
+    window._pendingTripId = trip.id;
+    showNotif('Trip created! 🎉', 'Code: ' + code + ' — click Start Trip to activate', 'success');
+  } catch(e) {
+    showNotif('Error', 'Could not save trip. Please try again.', 'danger');
+    console.error(e);
+  }
+}
+
+function copyTripCode() {
+  const code = document.getElementById('generated-code').textContent;
+  navigator.clipboard?.writeText(code);
+  showNotif('Copied!', 'Trip code copied to clipboard.', 'success');
+}
+
+function activateTrip() {
+  if (!currentUser) { showNotif('Not logged in', 'Please sign in first.', 'danger'); return; }
+  if (!window._pendingTripId) { showNotif('No trip pending', 'Create a trip first.', 'danger'); return; }
+  const trips = DB.get('trips') || [];
+  const trip = trips.find(t => t.id === window._pendingTripId);
+  if (!trip) { showNotif('Trip not found', 'Please create the trip again.', 'danger'); return; }
+  // End any currently active trip for this guide
+  trips.forEach(t => {
+    if (t.guideId === currentUser.id && t.status === 'active') t.status = 'ended';
+  });
+  trip.status = 'active';
+  DB.set('trips', trips);
+  currentTrip = trip;
+  window._pendingTripId = null;
+  showNotif('Trip started! ▶', 'Tourists can now join with code ' + trip.code, 'success');
+  refreshGuideUI();
+  showPanel('guide-active-trip');
+}
+
+function safeSet(id, prop, val) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  if (prop === 'text') el.textContent = val;
+  else if (prop === 'html') el.innerHTML = val;
+  else if (prop === 'display') el.style.display = val;
+  else if (prop === 'addClass') el.classList.add(val);
+  else if (prop === 'removeClass') el.classList.remove(val);
+}
+
+function refreshGuideUI() {
+  if (!currentUser) return;
+  try {
+    currentTrip = getActiveTrip();
+    const tourists = getTripTourists();
+    const log = DB.get('location_log') || [];
+    const sos = DB.get('sos_alerts') || [];
+    const activeSOSList = sos.filter(s => !s.resolved);
+    const tripLog = log.filter(l => l.tripId === currentTrip?.id);
+
+    // Stats — safe updates
+    safeSet('stat-tourists', 'text', tourists.length);
+    safeSet('stat-zones', 'text', tripLog.length);
+    safeSet('stat-trip-code', 'text', currentTrip ? currentTrip.code : '—');
+    safeSet('stat-trip-name', 'text', currentTrip ? currentTrip.name : '');
+
+    // SOS badge in sidebar
+    const badge = document.getElementById('sos-badge');
+    if (badge) {
+      badge.style.display = activeSOSList.length > 0 ? 'inline' : 'none';
+      badge.textContent = activeSOSList.length;
+    }
+
+    // SOS stat card
+    safeSet('stat-sos-card', 'display', activeSOSList.length > 0 ? 'block' : 'none');
+    safeSet('stat-sos-count', 'text', activeSOSList.length);
+
+    // Overview SOS banner
+    const overviewSOS = document.getElementById('overview-sos');
+    if (overviewSOS) {
+      if (activeSOSList.length > 0) {
+        overviewSOS.classList.add('active');
+        safeSet('overview-sos-list', 'html', activeSOSList.map(s => `
+          <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid rgba(220,38,38,0.2)">
+            <div style="font-size:22px">🚨</div>
+            <div style="flex:1">
+              <div style="font-weight:700;color:var(--danger)">${s.touristName}</div>
+              <div style="font-size:12px;color:var(--danger-dark)">📍 ${s.locationDesc} · 📞 ${s.phone} · Age: ${s.age}</div>
+              <div style="font-size:11px;color:var(--text-3);margin-top:2px">${new Date(s.time).toLocaleTimeString()}</div>
+            </div>
+            <button class="btn btn-sm btn-secondary" onclick="resolveSOSAlert('${s.id}')">Resolved</button>
+          </div>
+        `).join(''));
+      } else {
+        overviewSOS.classList.remove('active');
+      }
+    }
+
+    // Tourist lists
+    renderTouristList(tourists, 'guide-tourist-list');
+    renderTouristList(tourists, 'active-tourist-list');
+    safeSet('active-tourist-count', 'text', tourists.length);
+    safeSet('active-event-count', 'text', tripLog.length);
+
+    // Active trip panel
+    if (currentTrip) {
+      safeSet('no-active-trip', 'display', 'none');
+      safeSet('active-trip-content', 'display', 'block');
+      safeSet('active-trip-name', 'text', currentTrip.name + ' · ' + currentTrip.dest);
+      safeSet('active-code', 'text', currentTrip.code);
+      renderZones('guide-zone-grid', currentTrip.zones, null);
+    } else {
+      safeSet('no-active-trip', 'display', 'block');
+      safeSet('active-trip-content', 'display', 'none');
+      safeSet('active-trip-name', 'text', 'No trip active');
+    }
+
+    // Location log table
+    const sortedLog = tripLog.sort((a, b) => new Date(b.time) - new Date(a.time));
+    safeSet('location-log-body', 'html', sortedLog.length
+      ? sortedLog.slice(0, 50).map(l => `
+          <tr>
+            <td><strong>${l.touristName}</strong></td>
+            <td><span class="badge ${l.event === 'ENTER' ? 'badge-green' : 'badge-gray'}">${l.event}</span></td>
+            <td>${l.zone}</td>
+            <td style="font-family:monospace;font-size:11px">${l.lat != null ? l.lat.toFixed(4) : 'N/A'}, ${l.lng != null ? l.lng.toFixed(4) : 'N/A'}</td>
+            <td>${new Date(l.time).toLocaleTimeString()}</td>
+          </tr>`).join('')
+      : '<tr><td colspan="5" style="text-align:center;color:var(--text-3);padding:40px">No location events yet</td></tr>'
+    );
+
+    // SOS alerts panel
+    const sosList = document.getElementById('sos-alert-list');
+    const sosEmpty = document.getElementById('sos-empty');
+    const allSOS = sos.filter(s => currentTrip && s.tripId === currentTrip.id).reverse();
+    if (sosList && sosEmpty) {
+      if (allSOS.length) {
+        sosEmpty.style.display = 'none';
+        sosList.innerHTML = allSOS.map(s => `
+          <div class="tourist-item ${!s.resolved ? 'sos-alert' : ''}">
+            <div class="tourist-avatar ${!s.resolved ? 'sos' : ''}">🚨</div>
+            <div class="tourist-info">
+              <div class="tourist-name">${s.touristName} — SOS${s.resolved ? ' (Resolved)' : ''}</div>
+              <div class="tourist-detail">📞 ${s.phone} · Age: ${s.age}</div>
+              <div class="tourist-location">📍 ${s.locationDesc} · Lat: ${s.lat != null ? s.lat.toFixed(4) : 'N/A'}, Lng: ${s.lng != null ? s.lng.toFixed(4) : 'N/A'}</div>
+              <div class="tourist-detail" style="margin-top:2px">${new Date(s.time).toLocaleString()}</div>
+            </div>
+            ${!s.resolved
+              ? `<button class="btn btn-sm btn-secondary" onclick="resolveSOSAlert('${s.id}')">✓ Resolved</button>`
+              : '<span class="badge badge-green">Resolved</span>'}
+          </div>`).join('');
+      } else {
+        sosEmpty.style.display = 'block';
+        sosList.innerHTML = '';
+      }
+    }
+  } catch(e) {
+    console.error('refreshGuideUI error:', e);
+  }
+}
+
+function getTripTourists() {
+  if (!currentTrip) return [];
+  return (DB.get('tourists') || []).filter(t => t.tripId === currentTrip.id);
+}
+
+function renderTouristList(tourists, containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const sos = DB.get('sos_alerts') || [];
+  if (!tourists.length) {
+    el.innerHTML = '<p style="color:var(--text-3);font-size:14px;padding:20px;text-align:center">No tourists in current trip</p>';
+    return;
+  }
+  el.innerHTML = tourists.map(t => {
+    const hasSOS = sos.find(s => s.touristId === t.id && !s.resolved);
+    const log = DB.get('location_log') || [];
+    const lastEvent = log.filter(l => l.touristId === t.id).sort((a, b) => new Date(b.time) - new Date(a.time))[0];
+    return `
+      <div class="tourist-item ${hasSOS ? 'sos-alert' : ''}">
+        <div class="tourist-avatar ${hasSOS ? 'sos' : ''}">${t.name.charAt(0).toUpperCase()}</div>
+        <div class="tourist-info">
+          <div class="tourist-name">${t.name} ${hasSOS ? '🚨' : ''}</div>
+          <div class="tourist-detail">📞 ${t.phone} · Age: ${t.age}</div>
+          ${lastEvent ? `<div class="tourist-location">📍 ${lastEvent.event === 'ENTER' ? 'In' : 'Near'} ${lastEvent.zone} · ${new Date(lastEvent.time).toLocaleTimeString()}</div>` : '<div class="tourist-detail">Location not yet received</div>'}
+        </div>
+        <span class="badge ${hasSOS ? 'badge-red' : 'badge-green'}">${hasSOS ? 'SOS' : 'Safe'}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+function renderZones(containerId, zones, currentZone) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  el.innerHTML = (zones || []).map(z => {
+    const isActive = currentZone === z;
+    return `
+      <div class="zone-card ${isActive ? 'entered' : ''}">
+        <div class="zone-name">${z}</div>
+        <div class="zone-status">${isActive ? '✓ Currently inside' : 'Monitoring'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function resolveSOSAlert(id) {
+  const alerts = DB.get('sos_alerts') || [];
+  const a = alerts.find(a => a.id === id);
+  if (a) { a.resolved = true; DB.set('sos_alerts', alerts); }
+  refreshGuideUI();
+  showNotif('Alert resolved', 'SOS marked as handled.', 'success');
+}
+
+function refreshTouristList() {
+  refreshGuideUI();
+}
+
+function startGuideRefresh() {
+  if (guideRefreshInterval) clearInterval(guideRefreshInterval);
+  guideRefreshInterval = setInterval(() => {
+    if (currentUser && currentUser.role === 'guide') {
+      try { refreshGuideUI(); } catch(e) { console.error('refresh error:', e); }
+      try { drawGuideMap(); } catch(e) {}
+    }
+  }, 3000);
+}
+
+/* ════ Guide Map ════ */
+let guideMapCtx = null;
+
+function initGuideMap() {
+  const canvas = document.getElementById('guide-map');
+  if (!canvas) return;
+  guideMapCtx = canvas.getContext('2d');
+  resizeCanvas(canvas);
+  drawGuideMap();
+}
+
+function resizeCanvas(canvas) {
+  canvas.width = canvas.parentElement.clientWidth;
+  canvas.height = canvas.parentElement.clientHeight;
+}
+
+function drawGuideMap() {
+  const canvas = document.getElementById('guide-map');
+  if (!canvas) return;
+  const ctx = guideMapCtx || canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+
+  // Background
+  ctx.fillStyle = '#e8f5ef';
+  ctx.fillRect(0, 0, W, H);
+
+  // Grid
+  ctx.strokeStyle = 'rgba(26,107,74,0.1)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+  // Zones
+  if (currentTrip?.zones) {
+    const zonePositions = generateZonePositions(currentTrip.zones, W, H);
+    zonePositions.forEach((pos, i) => {
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, 36, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(26,107,74,0.1)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(26,107,74,0.3)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      ctx.fillStyle = '#1a6b4a';
+      ctx.font = '11px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillText(currentTrip.zones[i]?.substring(0, 14), pos.x, pos.y + 52);
+    });
+
+    // Tourists
+    const tourists = getTripTourists();
+    tourists.forEach((t, i) => {
+      if (!touristPositions[t.id]) {
+        const zp = zonePositions[i % zonePositions.length] || { x: W/2, y: H/2 };
+        touristPositions[t.id] = { x: zp.x + (Math.random()-0.5)*60, y: zp.y + (Math.random()-0.5)*60 };
+      }
+      const pos = touristPositions[t.id];
+      const sos = (DB.get('sos_alerts') || []).find(s => s.touristId === t.id && !s.resolved);
+      ctx.beginPath();
+      ctx.arc(pos.x, pos.y, 10, 0, Math.PI * 2);
+      ctx.fillStyle = sos ? '#dc2626' : '#2d9566';
+      ctx.fill();
+      ctx.fillStyle = '#fff';
+      ctx.font = 'bold 9px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillText(t.name.charAt(0), pos.x, pos.y + 3);
+      ctx.fillStyle = '#0f1f16';
+      ctx.font = '10px Inter';
+      ctx.fillText(t.name.split(' ')[0], pos.x, pos.y + 22);
+    });
+  }
+
+  // Legend
+  ctx.fillStyle = '#1a6b4a'; ctx.beginPath(); ctx.arc(16, 16, 6, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#0f1f16'; ctx.font = '11px Inter'; ctx.textAlign = 'left'; ctx.fillText('Tourist', 28, 20);
+  ctx.fillStyle = '#dc2626'; ctx.beginPath(); ctx.arc(16, 36, 6, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = '#0f1f16'; ctx.fillText('SOS', 28, 40);
+}
+
+function generateZonePositions(zones, W, H) {
+  return zones.map((_, i) => {
+    const angle = (i / zones.length) * Math.PI * 2 - Math.PI / 2;
+    const r = Math.min(W, H) * 0.3;
+    return { x: W/2 + r * Math.cos(angle), y: H/2 + r * Math.sin(angle) };
+  });
+}
+
+/* ════ Tourist Logic ════ */
+function initTourist() {
+  const saved = DB.get('tourist_session');
+  if (saved) {
+    currentTourist = saved;
+    const trips = DB.get('trips') || [];
+    currentTrip = trips.find(t => t.id === saved.tripId) || null;
+    if (currentTrip) {
+      showJoinedState();
+      startLocationTracking();
+    }
+  }
+}
+
+function joinTrip() {
+  const name = document.getElementById('t-name').value.trim();
+  const phone = document.getElementById('t-phone').value.trim();
+  const age = parseInt(document.getElementById('t-age').value);
+  const emergency = document.getElementById('t-emergency').value.trim();
+  const code = document.getElementById('t-code').value.trim().toUpperCase();
+  if (!name || !phone || !age || !code) { showNotif('Missing info', 'Please fill all fields.', 'danger'); return; }
+
+  const trips = DB.get('trips') || [];
+  const trip = trips.find(t => t.code === code && t.status === 'active');
+  if (!trip) { showNotif('Invalid code', 'No active trip found with that code. Ask your guide.', 'danger'); return; }
+
+  const tourist = {
+    id: 't_' + Date.now(), tripId: trip.id, name, phone, age, emergency,
+    joinedAt: new Date().toISOString(), userId: currentUser?.id
+  };
+  const tourists = DB.get('tourists') || [];
+  tourists.push(tourist);
+  DB.set('tourists', tourists);
+  DB.set('tourist_session', tourist);
+
+  currentTourist = tourist;
+  currentTrip = trip;
+
+  // Log JOIN event
+  logLocationEvent('JOIN', 'Start Point', null, null);
+  showJoinedState();
+  startLocationTracking();
+  showNotif('Joined!', `Welcome to ${trip.name}!`, 'success');
+}
+
+function showJoinedState() {
+  document.getElementById('join-form-section').style.display = 'none';
+  document.getElementById('joined-section').style.display = 'block';
+  document.getElementById('joined-trip-title').textContent = currentTrip.name;
+  document.getElementById('joined-trip-sub').textContent = currentTrip.dest + ' · Code: ' + currentTrip.code;
+  document.getElementById('joined-code').textContent = currentTrip.code;
+  renderZones('tourist-zone-grid', currentTrip.zones, null);
+  renderZones('tourist-map-zones', currentTrip.zones, null);
+  updateTouristLog();
+}
+
+function startLocationTracking() {
+  if (!navigator.geolocation) {
+    simulateLocationUpdates();
+    return;
+  }
+  locationWatchId = navigator.geolocation.watchPosition(pos => {
+    const { latitude: lat, longitude: lng } = pos.coords;
+    updateLocation(lat, lng);
+    document.getElementById('loc-status-coords').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+    document.getElementById('tourist-gps-coords').textContent = `Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}`;
+    touristPositions[currentTourist.id] = { x: 0, y: 0, lat, lng };
+  }, () => simulateLocationUpdates(), { enableHighAccuracy: true, maximumAge: 10000 });
+}
+
+let simLat = 19.0760 + (Math.random() - 0.5) * 0.01;
+let simLng = 72.8777 + (Math.random() - 0.5) * 0.01;
+let simInterval = null;
+
+function simulateLocationUpdates() {
+  if (simInterval) clearInterval(simInterval);
+  simInterval = setInterval(() => {
+    simLat += (Math.random() - 0.5) * 0.002;
+    simLng += (Math.random() - 0.5) * 0.002;
+    updateLocation(simLat, simLng);
+    const coords = `${simLat.toFixed(5)}, ${simLng.toFixed(5)} (simulated)`;
+    const el1 = document.getElementById('loc-status-coords');
+    const el2 = document.getElementById('tourist-gps-coords');
+    if (el1) el1.textContent = coords;
+    if (el2) el2.textContent = 'Lat: ' + simLat.toFixed(5) + ', Lng: ' + simLng.toFixed(5);
+    touristPositions[currentTourist?.id] = { x: 0, y: 0, lat: simLat, lng: simLng };
+    drawTouristMap();
+  }, 8000);
+  updateLocation(simLat, simLng);
+}
+
+function updateLocation(lat, lng) {
+  if (!currentTourist || !currentTrip) return;
+  const zone = detectGeofenceZone(lat, lng, currentTrip.zones);
+  const prev = DB.get('current_zone_' + currentTourist.id);
+  if (zone !== prev) {
+    if (zone) logLocationEvent('ENTER', zone, lat, lng);
+    else if (prev) logLocationEvent('EXIT', prev, lat, lng);
+    DB.set('current_zone_' + currentTourist.id, zone);
+    renderZones('tourist-zone-grid', currentTrip.zones, zone);
+    renderZones('tourist-map-zones', currentTrip.zones, zone);
+    updateTouristLog();
+    const cnt = document.getElementById('joined-zones');
+    if (cnt) {
+      const log = DB.get('location_log') || [];
+      cnt.textContent = log.filter(l => l.touristId === currentTourist.id && l.event === 'ENTER').length;
+    }
+  }
+}
+
+function detectGeofenceZone(lat, lng, zones) {
+  // Simulated: cycle through zones based on position hash
+  if (!zones || !zones.length) return null;
+  const hash = Math.abs(Math.round(lat * 1000 + lng * 1000)) % (zones.length + 2);
+  if (hash < zones.length) return zones[hash];
+  return null;
+}
+
+function logLocationEvent(event, zone, lat, lng) {
+  if (!currentTourist || !currentTrip) return;
+  const entry = {
+    id: 'log_' + Date.now(),
+    tripId: currentTrip.id,
+    touristId: currentTourist.id,
+    touristName: currentTourist.name,
+    event, zone,
+    lat: lat || simLat,
+    lng: lng || simLng,
+    locationDesc: zone + ' area',
+    time: new Date().toISOString()
+  };
+  const log = DB.get('location_log') || [];
+  log.push(entry);
+  DB.set('location_log', log);
+}
+
+function updateTouristLog() {
+  const el = document.getElementById('tourist-log');
+  if (!el || !currentTourist) return;
+  const log = DB.get('location_log') || [];
+  const myLog = log.filter(l => l.touristId === currentTourist.id).sort((a, b) => new Date(b.time) - new Date(a.time)).slice(0, 8);
+  el.innerHTML = myLog.length ? myLog.map(l => `
+    <div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid var(--border)">
+      <span class="badge ${l.event==='ENTER'?'badge-green':l.event==='EXIT'?'badge-gray':'badge-blue'}">${l.event}</span>
+      <span style="flex:1">${l.zone}</span>
+      <span style="color:var(--text-3);font-size:11px">${new Date(l.time).toLocaleTimeString()}</span>
+    </div>
+  `).join('') : '<p style="color:var(--text-3)">No location events yet</p>';
+}
+
+function drawTouristMap() {
+  const canvas = document.getElementById('tourist-map-canvas');
+  if (!canvas) return;
+  resizeCanvas(canvas);
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#e8f5ef';
+  ctx.fillRect(0, 0, W, H);
+  ctx.strokeStyle = 'rgba(26,107,74,0.1)';
+  ctx.lineWidth = 1;
+  for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+  for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+  if (currentTrip?.zones) {
+    const zonePositions = generateZonePositions(currentTrip.zones, W, H);
+    zonePositions.forEach((pos, i) => {
+      ctx.beginPath(); ctx.arc(pos.x, pos.y, 36, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(26,107,74,0.08)'; ctx.fill();
+      ctx.strokeStyle = 'rgba(26,107,74,0.25)'; ctx.lineWidth = 1.5; ctx.stroke();
+      ctx.fillStyle = '#1a6b4a'; ctx.font = '11px Inter'; ctx.textAlign = 'center';
+      ctx.fillText(currentTrip.zones[i]?.substring(0, 14), pos.x, pos.y + 52);
+    });
+  }
+
+  // Self marker
+  ctx.beginPath(); ctx.arc(W/2, H/2, 12, 0, Math.PI * 2);
+  ctx.fillStyle = '#2563eb'; ctx.fill();
+  ctx.beginPath(); ctx.arc(W/2, H/2, 24, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(37,99,235,0.2)'; ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.font = 'bold 11px Inter'; ctx.textAlign = 'center';
+  ctx.fillText('You', W/2, H/2 + 4);
+}
+
+/* ════ SOS ════ */
+function startSOS() {
+  if (sosActive) return;
+  const btn = document.getElementById('tourist-sos-btn');
+  const countdown = document.getElementById('sos-countdown');
+  countdown.style.display = 'block';
+  let count = 2;
+  countdown.textContent = `Sending in ${count}s… release to cancel`;
+  sosTimer = setInterval(() => {
+    count--;
+    if (count <= 0) {
+      clearInterval(sosTimer);
+      fireSOS();
+    } else {
+      countdown.textContent = `Sending in ${count}s… release to cancel`;
+    }
+  }, 1000);
+}
+
+function cancelSOS() {
+  if (sosTimer) { clearInterval(sosTimer); sosTimer = null; }
+  if (!sosActive) {
+    document.getElementById('sos-countdown').style.display = 'none';
+  }
+}
+
+function fireSOS() {
+  if (!currentTourist || !currentTrip) {
+    showNotif('Not in a trip', 'Join a trip before using SOS.', 'danger');
+    return;
+  }
+  sosActive = true;
+  const alert = {
+    id: 'sos_' + Date.now(),
+    tripId: currentTrip.id,
+    touristId: currentTourist.id,
+    touristName: currentTourist.name,
+    phone: currentTourist.phone,
+    age: currentTourist.age,
+    emergency: currentTourist.emergency,
+    lat: simLat,
+    lng: simLng,
+    locationDesc: 'Current position',
+    time: new Date().toISOString(),
+    resolved: false
+  };
+  const alerts = DB.get('sos_alerts') || [];
+  alerts.push(alert);
+  DB.set('sos_alerts', alerts);
+
+  const btn = document.getElementById('tourist-sos-btn');
+  btn.classList.add('sent');
+  btn.innerHTML = '✓<br>SENT';
+  document.getElementById('sos-countdown').style.display = 'none';
+  document.getElementById('sos-sent-msg').style.display = 'block';
+  showNotif('SOS Sent!', 'Your guide has been notified. Help is coming.', 'danger');
+}
+
+function cancelSOSAlert() {
+  const alerts = DB.get('sos_alerts') || [];
+  const last = alerts.filter(a => a.touristId === currentTourist?.id).sort((a,b) => new Date(b.time)-new Date(a.time))[0];
+  if (last) { last.resolved = true; DB.set('sos_alerts', alerts); }
+  sosActive = false;
+  const btn = document.getElementById('tourist-sos-btn');
+  btn.classList.remove('sent');
+  btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>SOS`;
+  document.getElementById('sos-sent-msg').style.display = 'none';
+  showNotif('Alert cancelled', 'SOS alert has been withdrawn.', 'success');
+}
+
+/* ════ Navigation ════ */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showPanel(id, event) {
+  if (event) event.preventDefault();
+  const panelEl = document.getElementById(id);
+  if (!panelEl) return;
+  document.querySelectorAll('#screen-guide .panel').forEach(p => p.classList.remove('active'));
+  panelEl.classList.add('active');
+  document.querySelectorAll('#screen-guide .sidebar-menu a').forEach(a => a.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('active');
+  if (id === 'guide-overview') { initGuideMap(); setTimeout(drawGuideMap, 100); }
+  refreshGuideUI();
+}
+
+function showTouristPanel(id) {
+  document.querySelectorAll('#screen-tourist .panel').forEach(p => p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('#screen-tourist .sidebar-menu a').forEach(a => a.classList.remove('active'));
+  const navEl = document.getElementById('nav-' + id);
+  if (navEl) navEl.classList.add('active');
+  if (id === 'tourist-map') { setTimeout(drawTouristMap, 100); }
+}
+
+/* ════ Notifications ════ */
+function showNotif(title, msg, type = 'info') {
+  const el = document.getElementById('notif');
+  el.className = 'notif show ' + (type === 'danger' ? 'danger' : type === 'success' ? 'success' : '');
+  el.innerHTML = `<div class="notif-title">${title}</div><div class="notif-msg">${msg}</div>`;
+  clearTimeout(el._t);
+  el._t = setTimeout(() => el.classList.remove('show'), 4000);
+}
+
+/* ════ Init ════ */
+seedDB();
+const savedSession = DB.get('session');
+if (savedSession) {
+  currentUser = savedSession;
+  document.getElementById('nav-user').textContent = savedSession.name;
+  document.getElementById('nav-role-badge').textContent = savedSession.role;
+  document.getElementById('main-nav').style.display = 'flex';
+  showScreen(savedSession.role === 'guide' ? 'screen-guide' : 'screen-tourist');
+  if (savedSession.role === 'guide') initGuide();
+  else initTourist();
+}
+
+// Set default date
+const dateInput = document.getElementById('trip-date');
+if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+</script>
+</body>
+</html>
